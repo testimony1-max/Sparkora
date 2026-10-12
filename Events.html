@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sparkora · Events</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<link rel="stylesheet" href="sparkora.css">
+<style>.ev{display:flex;gap:14px;align-items:center}.date{width:58px;text-align:center;background:rgba(255,230,230,.92);color:#1a0204;border-radius:14px;padding:8px 0;flex-shrink:0}.date b{display:block;font-size:20px;font-weight:900;line-height:1}.date span{font-size:10px;font-weight:800;color:#be123c}</style>
+</head>
+<body>
+<div class="wrap">
+  <h1 class="page-h">Events</h1><p class="sub">Meet people in real life near <span id="city"></span>.</p>
+  <div class="seg" id="seg"></div>
+  <div class="panel" id="list"></div>
+</div>
+<script src="sparkora.js"></script>
+<script>
+(function(){
+const {$,$$,esc}=S;S.mountNav('events');
+$('#city').textContent=S.profile().city;
+const day=n=>{const d=new Date();d.setDate(d.getDate()+n);return d};
+const EV=[
+ {id:1,t:'Sunset Rooftop Mixer',c:'Social',d:2,time:'7:00 PM',pl:'Mission Rooftop',g:48},
+ {id:2,t:'Coffee & Art Walk',c:'Art',d:4,time:'10:00 AM',pl:'Hayes Valley',g:23},
+ {id:3,t:'Sunrise Hike at Twin Peaks',c:'Outdoors',d:6,time:'6:30 AM',pl:'Twin Peaks',g:31},
+ {id:4,t:'Live Music Night',c:'Music',d:8,time:'8:00 PM',pl:'The Independent',g:92},
+ {id:5,t:'Pride Picnic',c:'Pride',d:11,time:'1:00 PM',pl:'Dolores Park',g:140}];
+let cat='All',going=S.store.get('rsvp',[]);
+const cats=['All',...new Set(EV.map(e=>e.c))];
+$('#seg').innerHTML=cats.map(c=>'<button data-c="'+c+'">'+c+'</button>').join('');
+function render(){
+  $$('#seg button').forEach(b=>b.classList.toggle('on',b.dataset.c===cat));
+  $('#list').innerHTML=EV.filter(e=>cat==='All'||e.c===cat).map(e=>{const d=day(e.d),on=going.includes(e.id);
+    return '<div class="row ev"><div class="date"><b>'+d.getDate()+'</b><span>'+d.toLocaleDateString(undefined,{month:'short'}).toUpperCase()+'</span></div><div class="tx"><div class="t1">'+esc(e.t)+'</div><div class="t2">'+e.time+' · '+esc(e.pl)+' · '+(e.g+(on?1:0))+' going</div></div><button class="btn sm'+(on?' ghost':'')+'" data-e="'+e.id+'">'+(on?'Going ✓':'RSVP')+'</button></div>'}).join('');
+}
+$('#seg').onclick=e=>{const b=e.target.closest('button');if(b){cat=b.dataset.c;render()}};
+$('#list').onclick=e=>{const b=e.target.closest('[data-e]');if(!b)return;const id=+b.dataset.e;going=going.includes(id)?going.filter(x=>x!==id):[...going,id];S.store.set('rsvp',going);S.toast(going.includes(id)?'You are going!':'RSVP removed');render()};
+render();
+})();
+</script>
+</body></html>
