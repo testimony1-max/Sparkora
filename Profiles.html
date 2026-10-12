@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sparkora · Profile</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<link rel="stylesheet" href="sparkora.css">
+<style>
+.pg{display:grid;grid-template-columns:1fr 1fr;gap:18px;align-items:start}@media(max-width:800px){.pg{grid-template-columns:1fr}}
+.ph-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.slot{aspect-ratio:3/4;border-radius:14px;border:1px dashed rgba(255,255,255,.25);background:rgba(255,255,255,.04);position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center;color:#9ca3af;font-size:26px}
+.slot img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.slot .x{position:absolute;top:4px;right:4px;width:26px;height:26px;border-radius:50%;border:none;background:rgba(0,0,0,.65);color:#fff;font-size:13px}
+.slot .mn{position:absolute;left:4px;bottom:4px;background:rgba(0,0,0,.65);color:#fff;border:none;border-radius:8px;font-size:10px;font-weight:700;padding:3px 7px}
+.slot.main{border:2px solid var(--red)}
+.bar{height:8px;border-radius:4px;background:rgba(255,255,255,.12);overflow:hidden;margin-top:6px}.bar i{display:block;height:100%;background:linear-gradient(90deg,#ef4444,#f43f5e)}
+.cc{font-size:11px;color:#9ca3af;text-align:right;margin-top:3px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1 class="page-h">My profile</h1><p class="sub">Edit your details and add photos from your device.</p>
+  <div class="pg">
+    <div>
+      <div class="panel" style="margin-bottom:16px"><h3>Photos <span style="font-size:11px;color:#9ca3af;font-weight:600" id="pc"></span></h3>
+        <div class="ph-grid" id="ph"></div>
+        <input type="file" id="file" accept="image/*" multiple class="hidden">
+        <button class="btn full" id="addp"><i class="bi bi-camera-fill"></i> Add photos</button>
+        <p class="fine">Choose from your gallery or take a new photo. Up to 6, saved on this device.</p>
+      </div>
+      <div class="panel"><h3>Profile strength <b id="sc"></b></h3><div class="bar"><i id="sb"></i></div><p class="fine" style="text-align:left" id="tip"></p></div>
+    </div>
+    <div class="panel">
+      <label class="lb" for="nm" style="margin-top:0">Name</label><input class="in" id="nm" maxlength="30">
+      <div class="two"><div><label class="lb" for="ag">Age</label><input class="in" id="ag" type="number" min="18" max="99" inputmode="numeric"></div>
+      <div><label class="lb" for="gd">I am</label><select class="in" id="gd"><option value="">Prefer not to say</option><option>Woman</option><option>Man</option><option>Non-binary</option></select></div></div>
+      <label class="lb" for="ct">City</label><input class="in" id="ct" maxlength="60">
+      <label class="lb" for="bio">Bio</label><textarea class="in" id="bio" maxlength="300" placeholder="Tell people about you"></textarea><div class="cc" id="cc"></div>
+      <label class="lb">Interests</label><div class="chips" id="ints"></div>
+      <label class="lb">Looking for</label><div class="chips" id="look"></div>
+      <div class="row" style="margin-top:8px"><div class="tx"><div class="t1">Show me on Discover</div></div><button class="sw" id="show" aria-label="Show me on Discover"></button></div>
+      <div class="err" id="err"></div>
+      <button class="btn full" id="save">Save profile</button>
+    </div>
+  </div>
+</div>
+<script src="sparkora.js"></script>
+<script>
+(function(){
+const {$,$$,esc}=S;S.mountNav('profile');
+let pf=S.profile();
+const BASE=['Adventure','Coffee','Music','Art','Fitness','Travel','Books','Film','Cooking','Hiking','Yoga','Gaming'];
+function drawPhotos(){
+  $('#pc').textContent=pf.photos.length+'/6';
+  $('#ph').innerHTML=Array.from({length:6},(_,i)=>pf.photos[i]?'<div class="slot'+(i===0?' main':'')+'"><img src="'+pf.photos[i]+'" alt="Photo '+(i+1)+'"><button class="x" data-rm="'+i+'" aria-label="Remove photo"><i class="bi bi-x"></i></button>'+(i===0?'<span class="mn">Main</span>':'<button class="mn" data-main="'+i+'">Make main</button>')+'</div>':'<button class="slot" data-add aria-label="Add photo"><i class="bi bi-plus-lg"></i></button>').join('');
+}
+function drawChips(){
+  const all=[...new Set([...BASE,...pf.interests])];
+  $('#ints').innerHTML=all.map(i=>'<button class="chip'+(pf.interests.includes(i)?' on':'')+'" data-i="'+esc(i)+'">'+esc(i)+'</button>').join('')+'<button class="chip add" id="addI">+ Add</button>';
+  $('#look').innerHTML=['Dating','Friends','Relationship'].map(i=>'<button class="chip'+(pf.looking.includes(i)?' on':'')+'" data-l="'+i+'">'+i+'</button>').join('');
+  $('#show').setAttribute('aria-pressed',pf.showMe);
+}
+function drawScore(){
+  const d=Object.assign({},pf,{name:$('#nm').value,bio:$('#bio').value,city:$('#ct').value,age:+$('#ag').value});
+  const old=S.profile();S.setProfile(d);const s=S.score();S.setProfile(old);
+  $('#sc').textContent=s+'%';$('#sb').style.width=s+'%';
+  $('#tip').textContent=s>=100?'Looking great!':pf.photos.length<3?'Add at least 3 photos to boost your score.':(d.bio||'').trim().length<20?'Write a bio of 20+ characters.':'Pick 3 or more interests.';
+}
+function fill(){$('#nm').value=pf.name;$('#ag').value=pf.age;$('#gd').value=pf.gender;$('#ct').value=pf.city;$('#bio').value=pf.bio;$('#cc').textContent=pf.bio.length+'/300'}
+$('#ph').onclick=e=>{
+  const rm=e.target.closest('[data-rm]'),mn=e.target.closest('[data-main]');
+  if(e.target.closest('[data-add]')){$('#file').click();return}
+  if(rm){pf.photos.splice(+rm.dataset.rm,1);S.setProfile(pf);drawPhotos();drawScore();S.mountNav('profile')}
+  if(mn){const i=+mn.dataset.main;pf.photos.unshift(pf.photos.splice(i,1)[0]);S.setProfile(pf);drawPhotos();S.mountNav('profile')}
+};
+$('#addp').onclick=()=>{if(pf.photos.length>=6){S.toast('You can add up to 6 photos');return}$('#file').click()};
+$('#file').onchange=async e=>{
+  const files=[...e.target.files],room=6-pf.photos.length;let added=0;
+  for(const f of files.slice(0,room)){
+    if(!f.type.startsWith('image/')){S.toast('Only image files are allowed');continue}
+    try{pf.photos.push(await S.resizeImage(f,900));added++}catch(x){S.toast('Could not read '+f.name)}
+  }
+  if(files.length>room)S.toast('Only 6 photos fit. Extra photos were skipped.');
+  if(added&&!S.setProfile(pf)){pf=S.profile()}
+  e.target.value='';drawPhotos();drawScore();S.mountNav('profile');
+};
+$('#ints').onclick=e=>{
+  const c=e.target.closest('.chip');if(!c)return;
+  if(c.id==='addI'){const b=S.modal('<div class="mh"><h3>Add an interest</h3></div><input class="in" id="ni" maxlength="20" placeholder="e.g. Surfing"><button class="btn full" id="nok">Add</button>');$('#ni',b).focus();$('#nok',b).onclick=()=>{const v=$('#ni',b).value.trim();if(v&&!pf.interests.includes(v))pf.interests.push(v);b.close();drawChips();drawScore()};return}
+  const i=c.dataset.i;pf.interests=pf.interests.includes(i)?pf.interests.filter(x=>x!==i):[...pf.interests,i];drawChips();drawScore();
+};
+$('#look').onclick=e=>{const c=e.target.closest('[data-l]');if(!c)return;const l=c.dataset.l;pf.looking=pf.looking.includes(l)?pf.looking.filter(x=>x!==l):[...pf.looking,l];drawChips()};
+$('#show').onclick=()=>{pf.showMe=!pf.showMe;drawChips()};
+['nm','ag','ct','bio'].forEach(id=>$('#'+id).addEventListener('input',()=>{$('#cc').textContent=$('#bio').value.length+'/300';drawScore()}));
+$('#save').onclick=()=>{
+  const name=$('#nm').value.trim(),age=+$('#ag').value;
+  if(!name){$('#err').textContent='Please enter your name.';return}
+  if(!(age>=18&&age<=99)){$('#err').textContent='You must be 18 or older.';return}
+  $('#err').textContent='';
+  pf=Object.assign(pf,{name,age,gender:$('#gd').value,city:$('#ct').value.trim()||pf.city,bio:$('#bio').value.trim()});
+  if(S.setProfile(pf)){S.toast('Profile saved');S.mountNav('profile');drawScore()}
+};
+fill();drawPhotos();drawChips();drawScore();
+})();
+</script>
+</body></html>
