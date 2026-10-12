@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sparkora · Messages</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<link rel="stylesheet" href="sparkora.css">
+<style>
+.msgs{display:grid;grid-template-columns:320px 1fr;gap:16px;height:calc(100vh - 170px);min-height:460px}
+.msgs .panel{padding:0;overflow:hidden;display:flex;flex-direction:column}
+.list{overflow:auto;padding:6px 12px}.row{cursor:pointer}
+.th-h{display:flex;align-items:center;gap:10px;padding:12px 14px;border-bottom:1px solid rgba(255,255,255,.08);font-weight:800}
+.th-h img{width:36px;height:36px;border-radius:50%;object-fit:cover}
+.back-m{display:none}
+.bubbles{flex:1;overflow:auto;padding:14px;display:flex;flex-direction:column;gap:8px}
+.b{max-width:78%;padding:9px 13px;border-radius:16px;font-size:14px;line-height:1.4;word-wrap:break-word}
+.b.me{align-self:flex-end;background:linear-gradient(135deg,#ef4444,#991b1b)}.b.them{align-self:flex-start;background:rgba(255,255,255,.1)}
+.b small{display:block;font-size:9.5px;opacity:.7;margin-top:3px}
+.send{display:flex;gap:8px;padding:10px;border-top:1px solid rgba(255,255,255,.08)}
+@media(max-width:800px){.msgs{grid-template-columns:1fr;height:calc(100vh - 190px)}.msgs.open #lp{display:none}.msgs:not(.open) #tp{display:none}.back-m{display:inline-flex}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1 class="page-h">Messages</h1><p class="sub">Chat with your matches.</p>
+  <div class="msgs" id="m"><div class="panel" id="lp"><div class="list" id="list"></div></div><div class="panel" id="tp"></div></div>
+</div>
+<script src="sparkora.js"></script>
+<script>
+(function(){
+const {$,$$,esc,U}=S;S.mountNav('messages');
+let cur=+new URLSearchParams(location.search).get('c')||0;
+const convs=()=>{const th=S.threads();return S.matches().map(id=>{const t=th[id]||[];return{id,p:S.byId(id),last:t[t.length-1],ts:t.length?t[t.length-1].ts:0}}).filter(c=>c.p).sort((a,b)=>b.ts-a.ts)};
+function renderList(){
+  const c=convs(),un=S.store.get('unread',[]);
+  $('#list').innerHTML=c.length?c.map(x=>'<div class="row'+(un.includes(x.id)?' unread':'')+'" data-id="'+x.id+'"><img class="ra" src="'+U(x.p.photo,100)+'" alt=""><div class="tx"><div class="t1">'+esc(x.p.name)+'</div><div class="t2">'+(x.last?(x.last.f==='me'?'You: ':'')+esc(x.last.t):'Say hi!')+'</div></div><div style="font-size:10px;color:#9ca3af">'+(x.ts?S.ago(x.ts):'')+'</div></div>').join(''):'<div class="empty"><i class="bi bi-chat-heart"></i>No conversations yet.<br><a class="btn red sm" href="index.html" style="margin-top:12px">Find matches</a></div>';
+}
+function renderThread(){
+  const tp=$('#tp');
+  if(!cur||!S.byId(cur)||!S.matches().includes(cur)){tp.innerHTML='<div class="empty" style="margin:auto"><i class="bi bi-chat-dots"></i>Select a conversation</div>';return}
+  const p=S.byId(cur),t=S.threads()[cur]||[];
+  tp.innerHTML='<div class="th-h"><button class="ib back-m" id="bk" aria-label="Back"><i class="bi bi-arrow-left"></i></button><img src="'+U(p.photo,100)+'" alt=""><div>'+esc(p.name)+'<div style="font-size:11px;color:'+(p.online?'#22c55e':'#9ca3af')+';font-weight:600">'+(p.online?'Online':'Offline')+'</div></div></div><div class="bubbles" id="bb">'+(t.length?t.map(x=>'<div class="b '+(x.f==='me'?'me':'them')+'">'+esc(x.t)+'<small>'+S.ago(x.ts)+'</small></div>').join(''):'<div class="empty">You matched with '+esc(p.name)+'. Say hello!</div>')+'</div><div class="send"><input class="in" id="mi" placeholder="Type a message..." aria-label="Message"><button class="btn" id="ms" aria-label="Send"><i class="bi bi-send-fill"></i></button></div>';
+  const bb=$('#bb');bb.scrollTop=bb.scrollHeight;
+  $('#bk').onclick=()=>{cur=0;$('#m').classList.remove('open');renderThread()};
+  const send=()=>{const v=$('#mi').value.trim();if(!v)return;S.sendMsg(cur,v);renderList();renderThread();$('#mi').focus()};
+  $('#ms').onclick=send;$('#mi').onkeydown=e=>{if(e.key==='Enter')send()};
+}
+function open(id){cur=id;S.markRead(id);$('#m').classList.add('open');S.mountNav('messages');renderList();renderThread()}
+$('#list').onclick=e=>{const r=e.target.closest('.row');if(r)open(+r.dataset.id)};
+renderList();
+if(cur&&S.matches().includes(cur))open(cur);else{cur=0;renderThread()}
+})();
+</script>
+</body></html>
