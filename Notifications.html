@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sparkora · Notifications</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<link rel="stylesheet" href="sparkora.css">
+</head>
+<body>
+<div class="wrap" style="max-width:720px">
+  <div style="display:flex;justify-content:space-between;align-items:center"><h1 class="page-h">Notifications</h1><button class="btn ghost sm" id="clr">Clear all</button></div>
+  <p class="sub">Likes, matches and boosts.</p>
+  <div class="panel" id="list"></div>
+</div>
+<script src="sparkora.js"></script>
+<script>
+(function(){
+const {$,esc}=S;
+function render(){const n=S.notifs();$('#list').innerHTML=n.length?n.map(x=>'<div class="row'+(x.r?'':' unread')+'"><div class="ic"><i class="bi '+x.ic+'"></i></div><div class="tx"><div class="t1">'+esc(x.t)+'</div><div class="t2">'+S.ago(x.ts)+'</div></div></div>').join(''):'<div class="empty"><i class="bi bi-bell"></i>You are all caught up.</div>'}
+render();
+S.store.set('notifs',S.notifs().map(x=>Object.assign({},x,{r:true})));
+S.mountNav('');
+$('#clr').onclick=()=>{S.store.set('notifs',[]);render()};
+})();
+</script>
+</body></html>
