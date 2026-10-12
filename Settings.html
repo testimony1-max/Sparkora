@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sparkora · Settings</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<link rel="stylesheet" href="sparkora.css">
+</head>
+<body>
+<div class="wrap" style="max-width:720px">
+  <h1 class="page-h">Settings</h1><p class="sub">Preferences, billing and data.</p>
+  <div class="panel" style="margin-bottom:16px"><h3>Preferences</h3>
+    <div class="row"><div class="tx"><div class="t1">Distance units</div></div><div class="seg" style="margin:0" id="units"><button data-u="km">km</button><button data-u="mi">mi</button></div></div>
+    <div class="row"><div class="tx"><div class="t1">Push notifications</div></div><button class="sw" id="swN" aria-label="Notifications"></button></div>
+    <div class="row"><div class="tx"><div class="t1">Show online status</div></div><button class="sw" id="swO" aria-label="Online status"></button></div>
+    <div class="row"><div class="tx"><div class="t1">Show me on Discover</div></div><button class="sw" id="swS" aria-label="Show me"></button></div>
+  </div>
+  <div class="panel" style="margin-bottom:16px" id="billing"><h3>Premium &amp; billing</h3><div id="bill"></div></div>
+  <div class="panel"><h3>Your data</h3><p class="sub" style="margin-bottom:12px">Profile, photos and settings are stored on this device.</p><a class="btn ghost sm" href="profile.html">Edit profile</a> <button class="btn ghost sm" id="reset" style="color:#fca5a5">Reset all data</button></div>
+</div>
+<script src="sparkora.js"></script>
+<script>
+(function(){
+const {$,$$,esc}=S;S.mountNav('');
+let st=S.settings();
+function draw(){
+  $$('#units button').forEach(b=>b.classList.toggle('on',b.dataset.u===st.units));
+  $('#swN').setAttribute('aria-pressed',st.notifs);$('#swO').setAttribute('aria-pressed',st.showOnline);$('#swS').setAttribute('aria-pressed',S.profile().showMe);
+}
+$('#units').onclick=e=>{const b=e.target.closest('button');if(b){st.units=b.dataset.u;S.setSettings(st);draw()}};
+$('#swN').onclick=()=>{st.notifs=!st.notifs;S.setSettings(st);draw()};
+$('#swO').onclick=()=>{st.showOnline=!st.showOnline;S.setSettings(st);draw()};
+$('#swS').onclick=()=>{const p=S.profile();p.showMe=!p.showMe;S.setProfile(p);draw()};
+function bill(){
+  const pm=S.premium(),c=S.card();let h='';
+  h+=pm.active?'<div class="row"><div class="ic"><i class="bi bi-rainbow"></i></div><div class="tx"><div class="t1">Pride Premium · active</div><div class="t2">'+esc(pm.price)+' / month · renews '+new Date(pm.next).toLocaleDateString()+'</div></div><button class="btn ghost sm" id="cancel">Cancel</button></div>'
+   :'<div class="row"><div class="ic"><i class="bi bi-lock-fill"></i></div><div class="tx"><div class="t1">Free plan</div><div class="t2">Unlock Sapphic Sparks and Gay Flames for <span data-price="5">…</span> / month</div></div><button class="btn sm" id="up">Go Premium</button></div>';
+  h+=c?'<div class="row"><div class="ic"><i class="bi bi-credit-card-2-front"></i></div><div class="tx"><div class="t1">'+esc(c.brand)+' •••• '+esc(c.last4)+'</div><div class="t2">Card on file</div></div><button class="btn ghost sm" id="rm">Remove</button></div>'
+   :'<div class="row"><div class="ic"><i class="bi bi-credit-card"></i></div><div class="tx"><div class="t1">No card linked</div></div><button class="btn ghost sm" id="add">Link card</button></div>';
+  $('#bill').innerHTML=h;S.hydrate();
+  const g=id=>document.getElementById(id);
+  if(g('up'))g('up').onclick=()=>S.openPremium();
+  if(g('add'))g('add').onclick=()=>S.openCard({mode:'card',onDone:bill});
+  if(g('cancel'))g('cancel').onclick=async()=>{if(await S.confirmBox({title:'Cancel Premium?',body:'You will lose access to Sapphic Sparks and Gay Flames.',ok:'Cancel Premium'})){S.cancelPremium();S.mountNav('');bill()}};
+  if(g('rm'))g('rm').onclick=async()=>{if(S.isPremium()){S.toast('Cancel Premium before removing your card');return}if(await S.confirmBox({title:'Remove card?',body:'Your saved card will be removed.',ok:'Remove'})){S.removeCard();bill()}};
+}
+window.addEventListener('sp:premium',bill);
+$('#reset').onclick=async()=>{if(await S.confirmBox({title:'Reset all data?',body:'This clears your profile, matches, messages and billing info on this device.',ok:'Reset'})){Object.keys(localStorage).filter(k=>k.startsWith('sp_')).forEach(k=>localStorage.removeItem(k));location.href='index.html'}};
+draw();bill();
+})();
+</script>
+</body></html>
