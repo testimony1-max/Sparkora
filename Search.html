@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sparkora · Search</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<link rel="stylesheet" href="sparkora.css">
+</head>
+<body>
+<div class="wrap">
+  <h1 class="page-h">Search</h1><p class="sub">Find people by name or interest.</p>
+  <input class="in" id="q" placeholder="Search name or interest, e.g. Coffee" aria-label="Search" style="margin-bottom:12px">
+  <div class="seg" id="seg"><button data-s="dist" class="on">Nearest</button><button data-s="age">Age</button><button data-s="name">Name</button></div>
+  <div id="out"></div>
+</div>
+<script src="sparkora.js"></script>
+<script>
+(function(){
+const {$,$$}=S;S.mountNav('');let sort='dist';
+function render(){
+  const q=$('#q').value.trim().toLowerCase();
+  let l=S.people.filter(p=>p.space==='any'&&(!q||p.name.toLowerCase().includes(q)||p.tags.some(t=>t.toLowerCase().includes(q))));
+  l.sort((a,b)=>sort==='name'?a.name.localeCompare(b.name):sort==='age'?a.age-b.age:a.dist-b.dist);
+  $('#out').innerHTML=l.length?'<div class="grid">'+l.map(p=>S.cardHTML(p,'<div class="btns"><button class="btn" data-v="'+p.id+'">View profile</button></div>')).join('')+'</div>':'<div class="empty"><i class="bi bi-search"></i>No one matches that search.</div>';
+}
+$('#q').oninput=render;
+$('#seg').onclick=e=>{const b=e.target.closest('button');if(!b)return;sort=b.dataset.s;$$('#seg button').forEach(x=>x.classList.toggle('on',x===b));render()};
+$('#out').onclick=e=>{const v=e.target.closest('[data-v]');if(v)S.viewProfile(S.byId(v.dataset.v))};
+render();
+})();
+</script>
+</body></html>
