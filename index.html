@@ -4,374 +4,227 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Sparkora</title>
-  <!-- Bootstrap Icons CDN -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <link rel="stylesheet" href="sparkora.css">
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body {
-      background: linear-gradient(135deg, #1b0204 0%, #0d0002 100%);
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-      color: #ffffff;
-      min-height: 100vh;
-      overflow-x: hidden;
-    }
-
-    /* --- RESPONSIVE DASHBOARD GRID --- */
-    .dashboard-layout {
-      max-width: 1600px;
-      margin: 20px auto;
-      padding: 0 16px;
-      display: grid;
-      grid-template-columns: 280px 1fr 320px;
-      gap: 20px;
-      align-items: start;
-    }
-
-    /* Tablet and Mobile Breakpoint */
-    @media (max-width: 1200px) {
-      .dashboard-layout {
-        grid-template-columns: 1fr;
-      }
-      .hide-on-mobile {
-        display: none !important;
-      }
-    }
-
-    /* Custom Scrollbar for Stories & Feeds */
-    ::-webkit-scrollbar { width: 4px; height: 4px; }
-    ::-webkit-scrollbar-track { background: rgba(0,0,0,0.1); }
-    ::-webkit-scrollbar-thumb { background: rgba(239, 68, 68, 0.4); border-radius: 4px; }
+    .dashboard-layout{max-width:1600px;margin:20px auto;padding:0 16px;display:grid;grid-template-columns:280px 1fr 320px;gap:20px;align-items:start}
+    @media(max-width:1200px){.dashboard-layout{grid-template-columns:1fr}}
+    .fh{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}
+    .fh span{display:flex;align-items:center;gap:8px;font-size:15px;font-weight:700}.fh i.big{font-size:18px;color:var(--red)}
+    .fr{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;gap:10px}
+    .fl{font-size:13.5px;font-weight:700}.fs{font-size:11px;color:var(--mut)}
+    .fb{margin-bottom:18px}.fb .fl{margin-bottom:8px}
+    .dist-box{display:flex;align-items:center;justify-content:space-between;background:rgba(255,255,255,.04);padding:8px 10px;border-radius:12px;border:1px solid rgba(255,255,255,.06)}
+    .lf{display:flex;align-items:center;justify-content:space-between;font-size:12.5px;color:#e5e7eb;margin-bottom:8px;cursor:pointer}
+    .lf input{accent-color:var(--red);width:16px;height:16px}
+    .metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+    .met{background:rgba(255,230,230,.9);color:#1a0204;padding:8px 2px;border-radius:10px;text-align:center;border:none;display:block}
+    .met b{font-size:11.5px;font-weight:800}.met b i{color:var(--red)}.met div{font-size:8.5px;font-weight:700;color:#4b5563}.met small{font-size:7.5px;font-weight:700;color:#16a34a}
+    .pride-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;width:100%;max-width:440px;margin-bottom:20px}
+    .pride-btn{position:relative;display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:16px;color:#fff;border:1px solid rgba(255,255,255,.12);box-shadow:0 6px 16px rgba(120,10,25,.3);transition:transform .15s}
+    .pride-btn:hover{transform:translateY(-2px)}
+    .pride-btn.sapphic{background:linear-gradient(135deg,#be123c,#5a0a1c)}.pride-btn.gay{background:linear-gradient(135deg,#ef4444,#7a1010)}
+    .pb-icon{width:34px;height:34px;border-radius:50%;background:rgba(255,255,255,.18);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+    .pb-name{font-size:13px;font-weight:800;line-height:1.15}.pb-sub{font-size:10.5px;opacity:.85;font-weight:600}
+    .pb-lock{position:absolute;top:-7px;right:8px;background:#fff;color:#be123c;font-size:8.5px;font-weight:900;padding:2px 7px;border-radius:8px}
+    .stories{background:rgba(255,255,255,.8);border:1px solid rgba(220,38,38,.15);border-radius:18px;padding:12px 16px;display:flex;gap:14px;align-items:center;margin-bottom:20px;width:100%;max-width:440px;overflow-x:auto}
+    .story{display:flex;flex-direction:column;align-items:center;min-width:54px;background:none;border:none;color:#37282a}
+    .story .ring{width:50px;height:50px;border-radius:50%;border:2px solid var(--red);padding:2px;position:relative}
+    .story .ring img{width:100%;height:100%;border-radius:50%;object-fit:cover}
+    .story .plus{position:absolute;bottom:-2px;right:-2px;width:16px;height:16px;background:var(--red);border-radius:50%;color:#fff;font-size:11px;font-weight:700;border:2px solid #fff;display:flex;align-items:center;justify-content:center}
+    .story span.n{font-size:10px;font-weight:600;margin-top:4px}
+    .deck{position:relative;width:100%;max-width:400px;height:440px;display:flex;justify-content:center;align-items:center}
+    .l2,.l3{position:absolute;height:100%;border-radius:24px}
+    .l3{width:92%;background:linear-gradient(135deg,#42080e,#1f0205);top:16px;opacity:.5;z-index:1}
+    .l2{width:96%;background:linear-gradient(135deg,#590b13,#280307);top:8px;opacity:.8;z-index:2}
+    .acard{position:relative;width:100%;height:100%;background:linear-gradient(180deg,#2a0408,#140103);border-radius:24px;overflow:hidden;z-index:3;display:flex;flex-direction:column;justify-content:space-between;padding:12px;border:1px solid rgba(255,255,255,.1);color:#fff;transition:transform .22s,opacity .22s;cursor:pointer}
+    .acard.fly-l{transform:translateX(-120%) rotate(-12deg);opacity:0}.acard.fly-r{transform:translateX(120%) rotate(12deg);opacity:0}
+    .ph{position:relative;width:100%;height:60%;border-radius:16px;overflow:hidden}.ph img{width:100%;height:100%;object-fit:cover}
+    .vid{position:absolute;top:10px;right:10px;background:rgba(0,0,0,.6);padding:3px 8px;border-radius:20px;font-size:10.5px;font-weight:700;display:flex;align-items:center;gap:4px}.vid i{color:var(--red)}
+    .info{background:rgba(18,2,4,.9);border-radius:16px;padding:10px 12px;border:1px solid rgba(255,255,255,.06);display:flex;flex-direction:column;gap:6px}
+    .info .n{font-size:15px;font-weight:800;display:flex;align-items:center;gap:6px}.info .l{font-size:11px;color:#d1d5db;margin-top:2px}.info .l i{color:var(--red)}
+    .info .t{display:flex;flex-wrap:wrap;gap:4px;font-size:9.5px;font-weight:600}.info .t span{background:rgba(255,255,255,.1);padding:2px 6px;border-radius:6px}
+    .actions{display:flex;align-items:center;justify-content:center;gap:10px;margin-top:18px}
+    .round{width:46px;height:46px;border-radius:50%;background:#fff;border:none;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 12px rgba(0,0,0,.12)}
+    .deck-empty{color:var(--ink)}
+    .live{display:inline-flex;align-items:center;gap:4px;font-size:10.5px;color:var(--red);font-weight:700}.live::before{content:'';width:6px;height:6px;background:var(--red);border-radius:50%}
+    .li{display:flex;align-items:flex-start;gap:8px;font-size:11.5px;margin-bottom:10px}.li img,.li .ic2{width:28px;height:28px;border-radius:50%;object-fit:cover;flex-shrink:0}
+    .li .ic2{background:rgba(239,68,68,.2);display:flex;align-items:center;justify-content:center;color:var(--red)}.li small{display:block;font-size:9.5px;color:var(--mut)}
+    .map{width:100%;height:115px;background:url('https://images.unsplash.com/photo-1524661135-423995f22d0b?auto=format&fit=crop&q=80&w=400') center/cover #3a0a10;border-radius:12px;display:flex;align-items:center;justify-content:center}
+    .map span{background:rgba(239,68,68,.3);border:2px solid var(--red);width:50px;height:50px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800}
+    .chatin{display:flex;align-items:center;background:rgba(255,255,255,.06);border-radius:12px;padding:6px 10px;border:1px solid rgba(255,255,255,.1)}
+    .chatin input{background:transparent;border:none;color:#fff;outline:none;font-size:14px;width:100%}
+    .chatin button{background:var(--red);border:none;color:#fff;width:28px;height:28px;border-radius:50%;flex-shrink:0}
   </style>
 </head>
 <body>
 
-  <!-- ========================================================= -->
-  <!-- NAVIGATION BAR -->
-  <!-- ========================================================= -->
-  <nav style="width: 100%; background: linear-gradient(180deg, #1d0306 0%, #110103 100%); border-bottom: 1px solid rgba(255, 255, 255, 0.05); position: sticky; top: 0; z-index: 1000; user-select: none;">
-    <div style="display: flex; align-items: center; justify-content: space-between; max-width: 1600px; margin: 0 auto; padding: 12px 20px;">
-      <!-- Logo & Badge -->
-      <div style="display: flex; align-items: center; gap: 10px;">
-        <div style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
-          <i class="bi bi-fire" style="color: #f83b3b; font-size: 24px;"></i>
-          <span style="font-weight: 900; font-size: 22px; letter-spacing: 0.08em; color: #ffffff; text-transform: uppercase;">Sparkora</span>
-        </div>
-        <span style="background: rgba(244, 63, 94, 0.2); color: #fecdd3; border: 1px solid rgba(244, 63, 94, 0.4); font-size: 9px; font-weight: 700; padding: 2px 7px; border-radius: 8px; display: flex; flex-direction: column; align-items: center; line-height: 1.1;">
-          <span>PRO</span>
-          <span style="font-size: 7.5px; opacity: 0.85;">Premium</span>
-        </span>
-      </div>
+<div class="dashboard-layout">
 
-      <!-- Center Links (Desktop) -->
-      <div class="hide-on-mobile" style="display: flex; align-items: center; gap: 24px; font-size: 14px; font-weight: 600;">
-        <a href="#" style="color: #ffffff; border-bottom: 2px solid #ef4444; padding-bottom: 4px; text-decoration: none;">Discover</a>
-        <a href="#" style="color: #e5e7eb; text-decoration: none; display: flex; align-items: center; gap: 6px;">
-          <span>Matches</span>
-          <span style="background-color: #ef4444; color: #ffffff; font-size: 11px; font-weight: 700; padding: 1px 6px; border-radius: 6px;">12</span>
-        </a>
-        <a href="#" style="color: #e5e7eb; text-decoration: none; display: flex; align-items: center; gap: 6px;">
-          <span>Messages</span>
-          <span style="background-color: #ef4444; color: #ffffff; font-size: 11px; font-weight: 700; padding: 1px 6px; border-radius: 6px;">3</span>
-        </a>
-        <a href="#" style="color: #e5e7eb; text-decoration: none; display: flex; align-items: center; gap: 5px;">
-          <i class="bi bi-lightning-fill" style="font-size: 13px;"></i>
-          <span>Boosts</span>
-        </a>
-        <a href="#" style="color: #e5e7eb; text-decoration: none; display: flex; align-items: center; gap: 5px;">
-          <i class="bi bi-geo-alt" style="font-size: 13px;"></i>
-          <span>Events</span>
-        </a>
-      </div>
-
-      <!-- Right Actions -->
-      <div style="display: flex; align-items: center; gap: 14px;">
-        <button style="background: transparent; border: none; color: #e5e7eb; cursor: pointer; padding: 4px; font-size: 18px;"><i class="bi bi-search"></i></button>
-        <button style="background: transparent; border: none; color: #e5e7eb; cursor: pointer; padding: 4px; font-size: 18px; position: relative;">
-          <i class="bi bi-bell"></i>
-          <span style="position: absolute; top: 4px; right: 4px; width: 7px; height: 7px; background-color: #ef4444; border-radius: 50%;"></span>
-        </button>
-        <button class="hide-on-mobile" style="background: transparent; border: none; color: #e5e7eb; cursor: pointer; padding: 4px; font-size: 18px;"><i class="bi bi-gear"></i></button>
-        <div style="position: relative; cursor: pointer; display: flex; align-items: center;">
-          <img style="width: 32px; height: 32px; border-radius: 50%; object-fit: cover; border: 2px solid rgba(239, 68, 68, 0.4);" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=100" alt="Avatar">
-          <span style="position: absolute; bottom: 0; right: 0; width: 9px; height: 9px; background-color: #22c55e; border-radius: 50%; border: 2px solid #110103;"></span>
-        </div>
-        <button class="hide-on-mobile" style="background: linear-gradient(90deg, #a81c1c 0%, #701010 100%); color: #ffffff; border: none; border-radius: 12px; padding: 8px 16px; font-size: 13px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 6px; box-shadow: 0 4px 14px rgba(168, 28, 28, 0.4);">
-          <i class="bi bi-lightning-fill"></i>
-          <span>Boost Now</span>
-        </button>
-      </div>
-    </div>
-  </nav>
-
-  <!-- ========================================================= -->
-  <!-- MAIN DASHBOARD CONTAINER -->
-  <!-- ========================================================= -->
-  <div class="dashboard-layout">
-    
-    <!-- ================= COLUMN 1: ADVANCED FILTERS ================= -->
-    <div style="background: linear-gradient(180deg, #220407 0%, #110103 100%); color: #ffffff; padding: 18px; border-radius: 20px; border: 1px solid rgba(153, 27, 27, 0.3); box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
-      
-      <!-- Filters Header -->
-      <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px;">
-        <div style="display: flex; align-items: center; gap: 8px;">
-          <i class="bi bi-sliders" style="font-size: 18px; color: #ef4444;"></i>
-          <span style="font-size: 15px; font-weight: 700;">Advanced Filters</span>
-        </div>
-        <i class="bi bi-filter-right" style="font-size: 18px; color: #9ca3af; cursor: pointer;"></i>
-      </div>
-
-      <!-- Active Now -->
-      <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px;">
-        <div>
-          <div style="font-size: 13.5px; font-weight: 700;">Active Now</div>
-          <div style="font-size: 11px; color: #9ca3af;">Online only</div>
-        </div>
-        <div style="width: 44px; height: 24px; background-color: #ef4444; border-radius: 12px; position: relative; display: flex; align-items: center; padding: 2px;">
-          <div style="width: 20px; height: 20px; background-color: #ffffff; border-radius: 50%; position: absolute; right: 2px;"></div>
-          <span style="font-size: 9px; font-weight: 800; color: #ffffff; margin-left: 6px;">ON</span>
-        </div>
-      </div>
-
-      <!-- Age Range -->
-      <div style="margin-bottom: 18px;">
-        <div style="font-size: 13.5px; font-weight: 700; margin-bottom: 8px;">Age Range</div>
-        <div style="width: 100%; height: 4px; background-color: rgba(255,255,255,0.15); border-radius: 2px; position: relative; margin-bottom: 8px;">
-          <div style="width: 40%; height: 100%; background-color: #ef4444; border-radius: 2px; position: absolute; left: 0;"></div>
-          <div style="width: 14px; height: 14px; background-color: #ffffff; border-radius: 50%; position: absolute; left: 40%; top: -5px;"></div>
-        </div>
-        <div style="display: flex; justify-content: space-between; font-size: 12.5px; font-weight: 700;">
-          <span>22</span>
-          <span>32</span>
-        </div>
-        <div style="font-size: 11px; color: #9ca3af; margin-top: 2px;">Selected: 22-32 years</div>
-      </div>
-
-      <!-- Distance -->
-      <div style="margin-bottom: 18px;">
-        <div style="font-size: 13.5px; font-weight: 700; margin-bottom: 8px;">Distance</div>
-        <div style="display: flex; align-items: center; justify-content: space-between; background: rgba(255,255,255,0.04); padding: 8px 10px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.06);">
-          <div style="display: flex; align-items: center; gap: 6px;">
-            <i class="bi bi-geo-alt-fill" style="color: #ef4444; font-size: 14px;"></i>
-            <span style="font-size: 13px; font-weight: 700;">10 km</span>
-          </div>
-          <button style="background-color: rgba(239, 68, 68, 0.2); color: #fecdd3; border: 1px solid rgba(239, 68, 68, 0.4); font-size: 10.5px; font-weight: 600; padding: 4px 8px; border-radius: 8px; cursor: pointer;">Change location</button>
-        </div>
-        <div style="font-size: 10.5px; color: #9ca3af; margin-top: 4px;">Within 10km - San Francisco, CA</div>
-      </div>
-
-      <!-- Interests -->
-      <div style="margin-bottom: 18px;">
-        <div style="font-size: 13.5px; font-weight: 700; margin-bottom: 8px;">Interests</div>
-        <div style="display: flex; flex-wrap: wrap; gap: 5px;">
-          <span style="background-color: #ef4444; color: #ffffff; font-size: 11.5px; font-weight: 600; padding: 4px 10px; border-radius: 16px;">Adventure</span>
-          <span style="background-color: rgba(255,255,255,0.08); color: #e5e7eb; font-size: 11.5px; padding: 4px 10px; border-radius: 16px;">Coffee</span>
-          <span style="background-color: rgba(255,255,255,0.08); color: #e5e7eb; font-size: 11.5px; padding: 4px 10px; border-radius: 16px;">Music</span>
-          <span style="background-color: rgba(255,255,255,0.08); color: #e5e7eb; font-size: 11.5px; padding: 4px 10px; border-radius: 16px;">Art</span>
-          <span style="background-color: rgba(255,255,255,0.08); color: #e5e7eb; font-size: 11.5px; padding: 4px 10px; border-radius: 16px;">Fitness</span>
-          <span style="background-color: rgba(255,255,255,0.04); color: #9ca3af; border: 1px dashed rgba(255,255,255,0.2); font-size: 11.5px; padding: 4px 10px; border-radius: 16px;">+ Add</span>
-        </div>
-      </div>
-
-      <!-- Looking For -->
-      <div style="margin-bottom: 18px;">
-        <div style="font-size: 13.5px; font-weight: 700; margin-bottom: 8px;">Looking for</div>
-        <div style="display: flex; flex-direction: column; gap: 8px; font-size: 12.5px;">
-          <label style="display: flex; align-items: center; justify-content: space-between; cursor: pointer;">
-            <span style="color: #e5e7eb;">Dating</span>
-            <input type="checkbox" checked style="accent-color: #ef4444; width: 15px; height: 15px; border-radius: 4px;">
-          </label>
-          <label style="display: flex; align-items: center; justify-content: space-between; cursor: pointer;">
-            <span style="color: #e5e7eb;">Friends</span>
-            <input type="checkbox" checked style="accent-color: #ef4444; width: 15px; height: 15px; border-radius: 4px;">
-          </label>
-          <label style="display: flex; align-items: center; justify-content: space-between; cursor: pointer;">
-            <span style="color: #e5e7eb;">Relationship</span>
-            <input type="checkbox" checked style="accent-color: #ef4444; width: 15px; height: 15px; border-radius: 4px;">
-          </label>
-        </div>
-      </div>
-
-      <!-- Verified Only -->
-      <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px;">
-        <div style="font-size: 13.5px; font-weight: 700;">Verified Only</div>
-        <div style="width: 44px; height: 24px; background-color: #ef4444; border-radius: 12px; position: relative; display: flex; align-items: center; padding: 2px;">
-          <div style="width: 20px; height: 20px; background-color: #ffffff; border-radius: 50%; position: absolute; right: 2px;"></div>
-          <span style="font-size: 9px; font-weight: 800; color: #ffffff; margin-left: 6px;">ON</span>
-        </div>
-      </div>
-
-      <!-- Profile Metrics Cards -->
-      <div>
-        <div style="font-size: 13.5px; font-weight: 700; margin-bottom: 8px;">Profile Metrics</div>
-        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px;">
-          <div style="background: rgba(255, 230, 230, 0.9); color: #1a0204; padding: 8px 2px; border-radius: 10px; text-align: center;">
-            <div style="font-weight: 800; font-size: 11.5px;"><i class="bi bi-heart-fill" style="color: #ef4444;"></i> 1.2k</div>
-            <div style="font-size: 8.5px; font-weight: 700; color: #4b5563;">Likes</div>
-            <div style="font-size: 7px; font-weight: 700; color: #16a34a;">↑ 112 wk</div>
-          </div>
-          <div style="background: rgba(255, 230, 230, 0.9); color: #1a0204; padding: 8px 2px; border-radius: 10px; text-align: center;">
-            <div style="font-weight: 800; font-size: 11.5px;"><i class="bi bi-chat-heart-fill" style="color: #ef4444;"></i> 48</div>
-            <div style="font-size: 8.5px; font-weight: 700; color: #4b5563;">Matches</div>
-            <div style="font-size: 7px; font-weight: 700; color: #16a34a;">+6 today</div>
-          </div>
-          <div style="background: rgba(255, 230, 230, 0.9); color: #1a0204; padding: 8px 2px; border-radius: 10px; text-align: center;">
-            <div style="font-weight: 800; font-size: 11.5px;"><i class="bi bi-star-fill" style="color: #ef4444;"></i> 89%</div>
-            <div style="font-size: 8.5px; font-weight: 700; color: #4b5563;">Score</div>
-            <div style="font-size: 7px; font-weight: 700; color: #16a34a;">Great!</div>
-          </div>
-        </div>
-      </div>
-
-    </div>
-
-    <!-- ================= COLUMN 2: CENTER DISCOVER & CARD STACK ================= -->
-    <div style="background-color: #f7eceb; color: #1a0204; padding: 20px; border-radius: 24px; display: flex; flex-direction: column; align-items: center; box-shadow: 0 10px 30px rgba(0,0,0,0.2); width: 100%;">
-      
-      <!-- Discover Header -->
-      <div style="text-align: center; margin-bottom: 18px;">
-        <h1 style="font-size: 22px; font-weight: 800; margin: 0 0 4px 0; color: #110103;">Discover</h1>
-        <p style="font-size: 12.5px; font-weight: 500; color: #554446; margin: 0;">3 new profiles near you • Refreshing daily</p>
-      </div>
-
-      <!-- Stories Bar -->
-      <div style="background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(10px); border: 1px solid rgba(220, 38, 38, 0.15); border-radius: 18px; padding: 12px 16px; display: flex; gap: 14px; align-items: center; margin-bottom: 20px; width: 100%; max-width: 440px; overflow-x: auto;">
-        <div style="display: flex; flex-direction: column; align-items: center; min-width: 50px;">
-          <div style="width: 50px; height: 50px; border-radius: 50%; border: 2px solid #ef4444; padding: 2px; position: relative; display: flex; align-items: center; justify-content: center;">
-            <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=120" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">
-            <div style="position: absolute; bottom: -2px; right: -2px; width: 16px; height: 16px; background-color: #ef4444; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #ffffff; font-size: 10px; font-weight: 700; border: 2px solid #ffffff;">+</div>
-          </div>
-          <span style="font-size: 10px; font-weight: 600; color: #37282a; margin-top: 4px;">Your Story</span>
-        </div>
-        <div style="display: flex; flex-direction: column; align-items: center; min-width: 50px;">
-          <div style="width: 50px; height: 50px; border-radius: 50%; border: 2px solid #ef4444; padding: 2px;"><img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&q=80&w=120" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;"></div>
-          <span style="font-size: 10px; font-weight: 600; color: #37282a; margin-top: 4px;">Jake • 5h</span>
-        </div>
-        <div style="display: flex; flex-direction: column; align-items: center; min-width: 50px;">
-          <div style="width: 50px; height: 50px; border-radius: 50%; border: 2px solid #ef4444; padding: 2px;"><img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=120" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;"></div>
-          <span style="font-size: 10px; font-weight: 600; color: #37282a; margin-top: 4px;">Maya • 2h</span>
-        </div>
-        <div style="display: flex; flex-direction: column; align-items: center; min-width: 50px;">
-          <div style="width: 50px; height: 50px; border-radius: 50%; border: 2px solid #ef4444; padding: 2px;"><img src="https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?auto=format&fit=crop&q=80&w=120" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;"></div>
-          <span style="font-size: 10px; font-weight: 600; color: #37282a; margin-top: 4px;">Noah • 1h</span>
-        </div>
-        <div style="display: flex; flex-direction: column; align-items: center; min-width: 50px;">
-          <div style="width: 50px; height: 50px; border-radius: 50%; border: 2px solid #ef4444; padding: 2px;"><img src="https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&q=80&w=120" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;"></div>
-          <span style="font-size: 10px; font-weight: 600; color: #37282a; margin-top: 4px;">Luna • 30m</span>
-        </div>
-      </div>
-
-      <!-- Card Stack Container -->
-      <div style="position: relative; width: 100%; max-width: 400px; height: 440px; display: flex; justify-content: center; align-items: center;">
-        <div style="position: absolute; width: 92%; height: 100%; background: linear-gradient(135deg, #42080e 0%, #1f0205 100%); border-radius: 24px; top: 16px; opacity: 0.5; z-index: 1;"></div>
-        <div style="position: absolute; width: 96%; height: 100%; background: linear-gradient(135deg, #590b13 0%, #280307 100%); border-radius: 24px; top: 8px; opacity: 0.8; z-index: 2;"></div>
-
-        <!-- Active Card -->
-        <div style="position: relative; width: 100%; height: 100%; background: linear-gradient(180deg, #2a0408 0%, #140103 100%); border-radius: 24px; overflow: hidden; z-index: 3; display: flex; flex-direction: column; justify-content: space-between; padding: 12px; border: 1px solid rgba(255, 255, 255, 0.1); color: #ffffff;">
-          <div style="position: relative; width: 100%; height: 60%; border-radius: 16px; overflow: hidden;">
-            <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=600" style="width: 100%; height: 100%; object-fit: cover;">
-            <div style="position: absolute; top: 10px; right: 10px; background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(6px); color: #ffffff; padding: 3px 8px; border-radius: 20px; font-size: 10.5px; font-weight: 700; display: flex; align-items: center; gap: 4px;">
-              <i class="bi bi-camera-video-fill" style="color: #ef4444;"></i> Video
-            </div>
-          </div>
-
-          <div style="background: rgba(18, 2, 4, 0.9); backdrop-filter: blur(10px); border-radius: 16px; padding: 10px 12px; border: 1px solid rgba(255, 255, 255, 0.06); display: flex; flex-direction: column; gap: 6px;">
-            <div>
-              <div style="font-size: 15px; font-weight: 800; display: flex; align-items: center; gap: 6px;">
-                Sofia, 24 <i class="bi bi-patch-check-fill" style="color: #38bdf8; font-size: 13px;"></i>
-              </div>
-              <div style="font-size: 11px; color: #d1d5db; display: flex; align-items: center; gap: 4px; margin-top: 2px;">
-                <i class="bi bi-geo-alt-fill" style="color: #ef4444;"></i> 2 km away • Mission District
-              </div>
-            </div>
-            <div style="display: flex; flex-wrap: wrap; gap: 4px; font-size: 9.5px; font-weight: 600; color: #e5e7eb;">
-              <span style="background: rgba(255, 255, 255, 0.1); padding: 2px 6px; border-radius: 6px;">Photographer</span>
-              <span style="background: rgba(255, 255, 255, 0.1); padding: 2px 6px; border-radius: 6px;">Coffee</span>
-              <span style="background: rgba(255, 255, 255, 0.1); padding: 2px 6px; border-radius: 6px;">Art</span>
-              <span style="background: rgba(255, 255, 255, 0.1); padding: 2px 6px; border-radius: 6px;">Hiking</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Action Buttons -->
-      <div style="display: flex; align-items: center; justify-content: center; gap: 10px; margin-top: 18px;">
-        <button style="width: 44px; height: 44px; border-radius: 50%; background: #ffffff; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
-          <i class="bi bi-x" style="font-size: 22px; color: #4b5563; font-weight: 800;"></i>
-        </button>
-        <button style="background: linear-gradient(135deg, #ef4444 0%, #991b1b 100%); color: #ffffff; border: none; border-radius: 24px; padding: 9px 18px; font-size: 12.5px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 5px;">
-          <i class="bi bi-stars"></i> Super
-        </button>
-        <button style="background: linear-gradient(135deg, #f43f5e 0%, #be123c 100%); color: #ffffff; border: none; border-radius: 24px; padding: 9px 18px; font-size: 12.5px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 5px;">
-          <i class="bi bi-heart-fill"></i> Like
-        </button>
-        <button style="width: 44px; height: 44px; border-radius: 50%; background: #ffffff; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
-          <i class="bi bi-lightning-fill" style="font-size: 18px; color: #ef4444;"></i>
-        </button>
-      </div>
-
-      <div style="font-size: 11.5px; font-weight: 600; color: #6b7280; margin-top: 12px;">1 of 12 • 87% match</div>
-
-    </div>
-
-    <!-- ================= COLUMN 3: LIVE ACTIVITY, MAP & CHAT ================= -->
-    <div style="display: flex; flex-direction: column; gap: 18px;">
-      
-      <!-- Live Activity Card -->
-      <div style="background: linear-gradient(180deg, #220407 0%, #110103 100%); color: #ffffff; padding: 16px; border-radius: 20px; border: 1px solid rgba(153, 27, 27, 0.3);">
-        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px;">
-          <div style="font-size: 14.5px; font-weight: 700;">Live Activity</div>
-          <div style="display: flex; align-items: center; gap: 4px; font-size: 10.5px; color: #ef4444; font-weight: 700;">
-            <span style="width: 6px; height: 6px; background-color: #ef4444; border-radius: 50%;"></span> LIVE
-          </div>
-        </div>
-        <div style="display: flex; flex-direction: column; gap: 10px; font-size: 11.5px;">
-          <div style="display: flex; align-items: flex-start; gap: 8px;">
-            <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=80" style="width: 28px; height: 28px; border-radius: 50%; object-fit: cover;">
-            <div>
-              <span style="font-weight: 700;">Sofia liked your profile</span>
-              <div style="font-size: 9.5px; color: #9ca3af;">2m ago</div>
-            </div>
-          </div>
-          <div style="display: flex; align-items: flex-start; gap: 8px;">
-            <div style="width: 28px; height: 28px; background: rgba(239, 68, 68, 0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #ef4444;"><i class="bi bi-lightning-fill"></i></div>
-            <div>
-              <span style="font-weight: 700;">Your Boost is active</span>
-              <div style="font-size: 9.5px; color: #9ca3af;">18min left • 430 profiles</div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Nearby Map Card -->
-      <div style="background: linear-gradient(180deg, #220407 0%, #110103 100%); color: #ffffff; padding: 16px; border-radius: 20px; border: 1px solid rgba(153, 27, 27, 0.3);">
-        <div style="font-size: 14.5px; font-weight: 700; margin-bottom: 8px;">Nearby Map</div>
-        <div style="width: 100%; height: 115px; background: url('https://images.unsplash.com/photo-1524661135-423995f22d0b?auto=format&fit=crop&q=80&w=400') center/cover; border-radius: 12px; display: flex; align-items: center; justify-content: center;">
-          <div style="background: rgba(239, 68, 68, 0.3); border: 2px solid #ef4444; width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 800;">10 km</div>
-        </div>
-        <div style="font-size: 10.5px; color: #9ca3af; text-align: center; margin-top: 6px;">14 users active nearby</div>
-      </div>
-
-      <!-- Chat Widget -->
-      <div style="background: linear-gradient(180deg, #220407 0%, #110103 100%); color: #ffffff; padding: 16px; border-radius: 20px; border: 1px solid rgba(153, 27, 27, 0.3);">
-        <div style="font-size: 14.5px; font-weight: 700; margin-bottom: 10px;">Chat</div>
-        <div style="display: flex; flex-direction: column; gap: 8px; font-size: 11.5px; margin-bottom: 10px;">
-          <div style="display: flex; align-items: center; gap: 8px;">
-            <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=80" style="width: 26px; height: 26px; border-radius: 50%; object-fit: cover;">
-            <div>
-              <div style="font-weight: 700;">You: Haha that's awesome!</div>
-              <div style="font-size: 9.5px; color: #22c55e;">Online</div>
-            </div>
-          </div>
-        </div>
-        <div style="display: flex; align-items: center; background: rgba(255,255,255,0.06); border-radius: 12px; padding: 6px 10px; border: 1px solid rgba(255,255,255,0.1);">
-          <input type="text" placeholder="Type a message..." style="background: transparent; border: none; color: #ffffff; outline: none; font-size: 11.5px; width: 100%;">
-          <button style="background: #ef4444; border: none; color: #ffffff; width: 24px; height: 24px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center;"><i class="bi bi-arrow-right"></i></button>
-        </div>
-      </div>
-
-    </div>
-
+  <!-- COLUMN 1: FILTERS -->
+  <div class="panel">
+    <div class="fh"><span><i class="bi bi-sliders big"></i> Advanced Filters</span><button class="ib" id="resetF" title="Reset filters" aria-label="Reset filters"><i class="bi bi-arrow-counterclockwise"></i></button></div>
+    <div class="fr"><div><div class="fl">Active Now</div><div class="fs">Online only</div></div><button class="sw" id="swActive" aria-label="Active now" aria-pressed="true"></button></div>
+    <div class="fb"><div class="fl">Age Range</div><div id="age"></div>
+      <div style="display:flex;justify-content:space-between;font-size:12.5px;font-weight:700"><span id="aMin"></span><span id="aMax"></span></div>
+      <div class="fs" id="aTxt" style="margin-top:2px"></div></div>
+    <div class="fb"><div class="fl">Distance</div>
+      <div class="dist-box"><div style="display:flex;align-items:center;gap:6px"><i class="bi bi-geo-alt-fill" style="color:var(--red)"></i><b id="dTxt" style="font-size:13px"></b></div><button class="chip on" id="chLoc">Change location</button></div>
+      <input type="range" id="dist" aria-label="Distance" style="margin-top:8px">
+      <div class="fs" id="dLoc"></div></div>
+    <div class="fb"><div class="fl">Interests</div><div class="chips" id="ints"></div></div>
+    <div class="fb"><div class="fl">Looking for</div><div id="look"></div></div>
+    <div class="fr"><div class="fl">Verified Only</div><button class="sw" id="swVer" aria-label="Verified only" aria-pressed="true"></button></div>
+    <div><div class="fl" style="margin-bottom:8px">Profile Metrics</div>
+      <div class="metrics">
+        <a class="met" href="matches.html?tab=likes"><b><i class="bi bi-heart-fill"></i> <span id="mL"></span></b><div>Likes</div><small>sent</small></a>
+        <a class="met" href="matches.html"><b><i class="bi bi-chat-heart-fill"></i> <span id="mM"></span></b><div>Matches</div><small>view all</small></a>
+        <a class="met" href="profile.html"><b><i class="bi bi-star-fill"></i> <span id="mS"></span></b><div>Score</div><small id="mSt"></small></a>
+      </div></div>
   </div>
 
+  <!-- COLUMN 2: DISCOVER -->
+  <div class="cream">
+    <div style="text-align:center;margin-bottom:18px">
+      <h1 style="font-size:22px;font-weight:800;color:#110103;margin-bottom:4px">Discover</h1>
+      <p style="font-size:12.5px;font-weight:500;color:#554446" id="subtitle"></p>
+    </div>
+    <div class="pride-row">
+      <a class="pride-btn sapphic" href="pride.html?space=lesbian"><span class="pb-lock" data-lock>PREMIUM</span><span class="pb-icon"><i class="bi bi-heart-fill"></i></span><span><div class="pb-name">Sapphic Sparks</div><div class="pb-sub">Lesbian</div></span></a>
+      <a class="pride-btn gay" href="pride.html?space=gay"><span class="pb-lock" data-lock>PREMIUM</span><span class="pb-icon"><i class="bi bi-fire"></i></span><span><div class="pb-name">Gay Flames</div><div class="pb-sub">Gay</div></span></a>
+    </div>
+    <div class="stories" id="stories"></div>
+    <div class="deck" id="deck"></div>
+    <div class="actions">
+      <button class="round" id="bPass" aria-label="Pass"><i class="bi bi-x" style="font-size:24px;color:#4b5563"></i></button>
+      <button class="btn red" id="bSuper"><i class="bi bi-stars"></i> Super</button>
+      <button class="btn" id="bLike"><i class="bi bi-heart-fill"></i> Like</button>
+      <button class="round" id="bBoost" aria-label="Boost"><i class="bi bi-lightning-fill" style="font-size:19px;color:var(--red)"></i></button>
+    </div>
+    <div style="font-size:11.5px;font-weight:600;color:#6b7280;margin-top:12px" id="cnt"></div>
+  </div>
+
+  <!-- COLUMN 3 -->
+  <div style="display:flex;flex-direction:column;gap:18px">
+    <div class="panel"><h3><a href="notifications.html">Live Activity</a><span class="live">LIVE</span></h3><div id="live"></div></div>
+    <a class="panel" href="search.html" style="display:block"><h3>Nearby Map</h3><div class="map"><span id="mapR"></span></div><div class="fs" style="text-align:center;margin-top:6px" id="mapN"></div></a>
+    <div class="panel"><h3><a href="messages.html">Chat</a></h3><div id="chat"></div></div>
+  </div>
+</div>
+
+<input type="file" id="storyFile" accept="image/*" class="hidden">
+<script src="sparkora.js"></script>
+<script>
+(function(){
+const {$,$$,esc,U}=S;
+S.mountNav('discover');
+let F=S.filters();
+const save=()=>S.setFilters(F);
+const INT=['Adventure','Coffee','Music','Art','Fitness'];
+
+/* ---- Filters ---- */
+function setSw(el,on){el.setAttribute('aria-pressed',on)}
+function drawFilters(){
+  setSw($('#swActive'),F.active);setSw($('#swVer'),F.verified);
+  $('#aMin').textContent=F.ageMin;$('#aMax').textContent=F.ageMax;$('#aTxt').textContent='Selected: '+F.ageMin+'–'+F.ageMax+' years';
+  $('#dTxt').textContent=S.dist(F.dist);$('#dLoc').textContent='Within '+S.dist(F.dist)+' - '+S.profile().city;
+  $('#mapR').textContent=S.dist(F.dist);
+  const all=[...new Set([...INT,...F.custom,...F.interests])];
+  $('#ints').innerHTML=all.map(i=>'<button class="chip'+(F.interests.includes(i)?' on':'')+'" data-i="'+esc(i)+'">'+esc(i)+'</button>').join('')+'<button class="chip add" id="addI">+ Add</button>';
+  $('#look').innerHTML=['Dating','Friends','Relationship'].map(l=>'<label class="lf"><span>'+l+'</span><input type="checkbox" data-l="'+l+'"'+(F.looking.includes(l)?' checked':'')+'></label>').join('');
+}
+S.dual($('#age'),{min:18,max:60,lo:F.ageMin,hi:F.ageMax,onChange:(a,b)=>{F.ageMin=a;F.ageMax=b;save();drawFilters();renderDeck()}});
+S.single($('#dist'),{min:1,max:100,value:F.dist,onChange:v=>{F.dist=v;save();drawFilters();renderDeck()}});
+$('#swActive').onclick=()=>{F.active=!F.active;save();drawFilters();renderDeck()};
+$('#swVer').onclick=()=>{F.verified=!F.verified;save();drawFilters();renderDeck()};
+$('#ints').onclick=e=>{
+  const c=e.target.closest('.chip');if(!c)return;
+  if(c.id==='addI'){
+    const b=S.modal('<div class="mh"><h3>Add an interest</h3></div><input class="in" id="ni" maxlength="20" placeholder="e.g. Travel"><button class="btn full" id="nok">Add</button>');
+    $('#ni',b).focus();
+    $('#nok',b).onclick=()=>{const v=$('#ni',b).value.trim();if(!v)return;if(!F.custom.includes(v)&&!INT.includes(v))F.custom.push(v);if(!F.interests.includes(v))F.interests.push(v);save();b.close();drawFilters();renderDeck()};
+    return;
+  }
+  const i=c.dataset.i;F.interests=F.interests.includes(i)?F.interests.filter(x=>x!==i):[...F.interests,i];save();drawFilters();renderDeck();
+};
+$('#look').onchange=e=>{const l=e.target.dataset.l;if(!l)return;F.looking=e.target.checked?[...F.looking,l]:F.looking.filter(x=>x!==l);save()};
+$('#chLoc').onclick=()=>{
+  const b=S.modal('<div class="mh"><h3>Change location</h3></div><input class="in" id="nl" maxlength="60" value="'+esc(S.profile().city)+'" placeholder="City, Country"><button class="btn full" id="lok">Save location</button>');
+  $('#lok',b).onclick=()=>{const v=$('#nl',b).value.trim();if(!v)return;const p=S.profile();p.city=v;S.setProfile(p);b.close();drawFilters();S.toast('Location updated')};
+};
+$('#resetF').onclick=()=>{F=Object.assign({},S.filters(),{active:true,ageMin:22,ageMax:32,dist:10,interests:['Adventure'],looking:['Dating','Friends','Relationship'],verified:true});save();location.reload()};
+
+/* ---- Metrics ---- */
+function drawMetrics(){$('#mL').textContent=S.likes().length;$('#mM').textContent=S.matches().length;const s=S.score();$('#mS').textContent=s+'%';$('#mSt').textContent=s>=80?'Great!':'Improve'}
+
+/* ---- Deck ---- */
+function pool(){
+  const seen=S.seen();
+  return S.people.filter(p=>p.space==='any'&&!seen.includes(p.id)&&p.age>=F.ageMin&&p.age<=F.ageMax&&p.dist<=F.dist&&(!F.verified||p.verified)&&(!F.active||p.online))
+    .map(p=>({p,s:p.tags.filter(t=>F.interests.includes(t)).length})).sort((a,b)=>b.s-a.s||a.p.dist-b.p.dist).map(x=>x.p);
+}
+const pct=p=>Math.min(99,62+p.tags.filter(t=>F.interests.includes(t)).length*10+(p.id*7)%15);
+function renderDeck(){
+  const list=pool(),el=$('#deck');
+  $('#subtitle').textContent=list.length+' new profile'+(list.length===1?'':'s')+' near you • Refreshing daily';
+  const nearby=S.people.filter(p=>p.online&&p.dist<=F.dist).length;$('#mapN').textContent=nearby+' users active nearby';
+  if(!list.length){
+    el.innerHTML='<div class="empty deck-empty"><i class="bi bi-emoji-smile"></i>You are all caught up.<br>Widen your filters or start over.<br><button class="btn red sm" id="again" style="margin-top:12px">Show passed profiles again</button></div>';
+    $('#again').onclick=()=>{S.store.set('seen',[]);renderDeck()};$('#cnt').textContent='';return;
+  }
+  const p=list[0];
+  el.innerHTML='<div class="l3"></div><div class="l2"></div><div class="acard" id="acard"><div class="ph"><img src="'+U(p.photo,600)+'" alt="'+esc(p.name)+'"><div class="vid"><i class="bi bi-camera-video-fill"></i> Video</div></div><div class="info"><div><div class="n">'+esc(p.name)+', '+p.age+(p.verified?' <i class="bi bi-patch-check-fill" style="color:#38bdf8;font-size:13px"></i>':'')+'</div><div class="l"><i class="bi bi-geo-alt-fill"></i> '+S.dist(p.dist)+' away • '+esc(S.profile().city.split(',')[0])+'</div></div><div class="t">'+p.tags.map(t=>'<span>'+esc(t)+'</span>').join('')+'</div></div></div>';
+  $('#acard').onclick=()=>S.viewProfile(p);
+  $('#cnt').textContent='1 of '+list.length+' • '+pct(p)+'% match';
+}
+async function act(k){
+  const list=pool();if(!list.length){S.toast('No more profiles. Try widening your filters.');return}
+  const p=list[0],c=$('#acard');if(c)c.classList.add(k==='pass'?'fly-l':'fly-r');
+  await new Promise(r=>setTimeout(r,220));
+  if(k==='pass')S.pass(p.id);else S.likeFlow(p.id,k==='super');
+  S.mountNav('discover');drawMetrics();renderDeck();renderChat();renderLive();
+}
+$('#bPass').onclick=()=>act('pass');$('#bLike').onclick=()=>act('like');$('#bSuper').onclick=()=>act('super');
+$('#bBoost').onclick=()=>{const r=S.activateBoost();if(r==='ok'){S.toast('Boost activated for 30 minutes');renderLive()}else if(r==='active')S.toast('Your Boost is already running');else{location.href='boosts.html'}};
+
+/* ---- Stories ---- */
+function renderStories(){
+  const mine=S.store.get('story',null),ids=[[2,'5h'],[3,'2h'],[4,'1h'],[11,'30m']];
+  $('#stories').innerHTML='<button class="story" id="myStory"><div class="ring"><img src="'+(mine||S.avatar())+'" alt="Your story"><div class="plus">+</div></div><span class="n">Your Story</span></button>'+
+   ids.map(x=>{const p=S.byId(x[0]);return '<button class="story" data-s="'+p.id+'"><div class="ring"><img src="'+U(p.photo,120)+'" alt="'+esc(p.name)+'"></div><span class="n">'+esc(p.name)+' • '+x[1]+'</span></button>'}).join('');
+}
+$('#stories').onclick=e=>{
+  const b=e.target.closest('.story');if(!b)return;
+  if(b.id==='myStory'){const m=S.store.get('story',null);if(m){const md=S.modal('<img src="'+m+'" alt="Your story" style="width:100%;border-radius:16px;max-height:70vh;object-fit:contain"><button class="btn full" id="ns">Replace story</button><button class="btn ghost full" data-close>Close</button>');$('#ns',md).onclick=()=>{md.close();$('#storyFile').click()}}else $('#storyFile').click();return}
+  const p=S.byId(b.dataset.s);S.modal('<img src="'+U(p.photo,700)+'" alt="'+esc(p.name)+'" style="width:100%;border-radius:16px;max-height:70vh;object-fit:cover"><div style="font-weight:800;margin:10px 0 2px">'+esc(p.name)+'</div><button class="btn full" data-close>Close</button>');
+};
+$('#storyFile').onchange=async e=>{const f=e.target.files[0];if(!f)return;try{const d=await S.resizeImage(f,700);if(S.store.set('story',d)){S.toast('Story added');renderStories()}}catch(x){S.toast('Could not read that image')}e.target.value=''};
+
+/* ---- Live activity & chat ---- */
+function renderLive(){
+  const n=S.notifs().slice(0,2),b=S.boost();let h='';
+  if(S.boostActive()){h+='<div class="li"><div class="ic2"><i class="bi bi-lightning-fill"></i></div><div><b>Your Boost is active</b><small>'+Math.max(1,Math.ceil((b.until-Date.now())/6e4))+'min left</small></div></div>'}
+  else h+='<div class="li"><div class="ic2"><i class="bi bi-lightning-fill"></i></div><div><b>'+(b.credits?'You have '+b.credits+' Boost'+(b.credits>1?'s':''):'No Boosts left')+'</b><small><a href="boosts.html" style="text-decoration:underline">'+(b.credits?'Use one now':'Get more')+'</a></small></div></div>';
+  h+=n.map(x=>'<div class="li"><div class="ic2"><i class="bi '+x.ic+'"></i></div><div><b>'+esc(x.t)+'</b><small>'+S.ago(x.ts)+'</small></div></div>').join('');
+  $('#live').innerHTML=h;
+}
+function lastConv(){const th=S.threads();let best=null,ts=-1;S.matches().forEach(id=>{const t=th[id]||[],l=t[t.length-1],x=l?l.ts:0;if(x>ts){ts=x;best=id}});return best}
+function renderChat(){
+  const id=lastConv();
+  if(!id){$('#chat').innerHTML='<div class="fs" style="margin-bottom:10px">Match with someone to start chatting.</div>';return}
+  const p=S.byId(id),t=S.threads()[id]||[],l=t[t.length-1];
+  $('#chat').innerHTML='<a href="messages.html?c='+id+'" style="display:flex;align-items:center;gap:8px;margin-bottom:10px;font-size:11.5px"><img src="'+U(p.photo,80)+'" alt="" style="width:26px;height:26px;border-radius:50%;object-fit:cover"><div><div style="font-weight:700">'+(l&&l.f==='me'?'You':esc(p.name))+': '+esc(l?l.t:'Say hi!')+'</div><div style="font-size:9.5px;color:'+(p.online?'#22c55e':'#9ca3af')+'">'+(p.online?'Online':'Offline')+'</div></div></a><div class="chatin"><input id="ci" placeholder="Type a message..." aria-label="Message"><button id="cs" aria-label="Send"><i class="bi bi-arrow-right"></i></button></div>';
+  const send=()=>{const v=$('#ci').value.trim();if(!v)return;S.sendMsg(id,v);renderChat()};
+  $('#cs').onclick=send;$('#ci').onkeydown=e=>{if(e.key==='Enter')send()};
+}
+
+/* ---- init ---- */
+$$('[data-lock]').forEach(x=>x.textContent=S.isPremium()?'UNLOCKED':'PREMIUM');
+drawFilters();drawMetrics();renderDeck();renderStories();renderLive();renderChat();
+setInterval(renderLive,30000);
+window.addEventListener('sp:change',()=>{S.mountNav('discover');drawMetrics();renderDeck();renderChat()});
+window.addEventListener('sp:premium',()=>$$('[data-lock]').forEach(x=>x.textContent=S.isPremium()?'UNLOCKED':'PREMIUM'));
+})();
+</script>
 </body>
 </html>
