@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sparkora · Matches</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<link rel="stylesheet" href="sparkora.css">
+</head>
+<body>
+<div class="wrap">
+  <h1 class="page-h">Matches</h1><p class="sub">People you matched with, people you liked, and people who liked you.</p>
+  <div class="seg" id="seg"><button data-t="matches">Matches</button><button data-t="likes">Likes sent</button><button data-t="liked">Liked you</button></div>
+  <div id="out"></div>
+</div>
+<script src="sparkora.js"></script>
+<script>
+(function(){
+const {$,$$}=S;S.mountNav('matches');
+let tab=new URLSearchParams(location.search).get('tab');if(!['matches','likes','liked'].includes(tab))tab='matches';
+function render(){
+  $$('#seg button').forEach(b=>b.classList.toggle('on',b.dataset.t===tab));
+  let list=[],btn;
+  const m=S.matches(),prem=S.isPremium();
+  if(tab==='matches'){list=m.map(S.byId);btn=p=>'<div class="btns"><a class="btn" href="messages.html?c='+p.id+'">Message</a><button class="btn ghost" data-un="'+p.id+'" aria-label="Unmatch"><i class="bi bi-person-dash"></i></button></div>'}
+  if(tab==='likes'){list=S.likes().map(l=>S.byId(l.id));btn=p=>m.includes(p.id)?'<div class="btns"><a class="btn" href="messages.html?c='+p.id+'">Message</a></div>':'<div class="btns"><button class="btn ghost" disabled>Liked</button></div>'}
+  if(tab==='liked'){list=S.people.filter(p=>p.likesYou&&!m.includes(p.id)&&(p.space==='any'||prem));btn=p=>'<div class="btns"><button class="btn" data-lb="'+p.id+'"><i class="bi bi-heart-fill"></i> Like back</button><button class="btn ghost" data-v="'+p.id+'" aria-label="View"><i class="bi bi-person"></i></button></div>'}
+  list=list.filter(Boolean);
+  $('#out').innerHTML=list.length?'<div class="grid">'+list.map(p=>S.cardHTML(p,btn(p))).join('')+'</div>':'<div class="empty"><i class="bi bi-heart"></i>Nothing here yet.<br><a class="btn red sm" href="index.html" style="margin-top:12px">Go to Discover</a></div>';
+}
+$('#seg').onclick=e=>{const b=e.target.closest('button');if(!b)return;tab=b.dataset.t;history.replaceState(null,'','?tab='+tab);render()};
+$('#out').onclick=async e=>{
+  const u=e.target.closest('[data-un]'),l=e.target.closest('[data-lb]'),v=e.target.closest('[data-v]');
+  if(u){if(await S.confirmBox({title:'Unmatch?',body:'You will no longer be able to message each other.',ok:'Unmatch'})){S.unmatch(u.dataset.un);S.mountNav('matches');render()}}
+  if(l){S.likeFlow(+l.dataset.lb,false);S.mountNav('matches');render()}
+  if(v)S.viewProfile(S.byId(v.dataset.v));
+};
+render();
+})();
+</script>
+</body></html>
