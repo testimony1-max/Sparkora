@@ -1,0 +1,26 @@
+{
+  "name": "sparkora",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/testimony1-max/Sparkora.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "bugs": {
+    "url": "https://github.com/testimony1-max/Sparkora/issues"
+  },
+  "homepage": "https://github.com/testimony1-max/Sparkora#readme",
+  "devDependencies": {
+    "vite": "^8.3.4"
+  }
+}

@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sparkora - Sign Up</title>
+  <!-- Bootstrap Icons CDN -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: linear-gradient(135deg, #1b0204 0%, #0d0002 100%);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      color: #ffffff;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+
+    .signup-container {
+      width: 100%;
+      max-width: 440px;
+      background: linear-gradient(180deg, #220407 0%, #110103 100%);
+      border: 1px solid rgba(153, 27, 27, 0.4);
+      border-radius: 24px;
+      padding: 32px 24px;
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6);
+    }
+
+    .form-input {
+      width: 100%;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 12px;
+      padding: 12px 14px;
+      color: #ffffff;
+      font-size: 14px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .form-input:focus {
+      border-color: #ef4444;
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    .form-input::placeholder {
+      color: #8c787a;
+    }
+
+    .submit-btn {
+      width: 100%;
+      background: linear-gradient(90deg, #b91c1c 0%, #7f1d1d 100%);
+      color: #ffffff;
+      border: none;
+      border-radius: 12px;
+      padding: 14px;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 4px 15px rgba(127, 29, 29, 0.5);
+      transition: opacity 0.2s;
+    }
+
+    .submit-btn:hover {
+      opacity: 0.9;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Brand Logo -->
+  <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 24px; cursor: pointer;">
+    <i class="bi bi-fire" style="color: #f83b3b; font-size: 30px;"></i>
+    <span style="font-weight: 900; font-size: 26px; letter-spacing: 0.08em; text-transform: uppercase; color: #ffffff;">Sparkora</span>
+  </div>
+
+  <!-- Sign Up Card Box -->
+  <div class="signup-container">
+    
+    <div style="text-align: center; margin-bottom: 24px;">
+      <h1 style="font-size: 22px; font-weight: 800; margin-bottom: 6px; color: #ffffff;">Create Your Account</h1>
+      <p style="font-size: 13px; color: #a38f91;">Join Sparkora and start discovering amazing profiles near you</p>
+    </div>
+
+    <!-- Signup Form (Redirects to index.html on submit) -->
+    <form action="index.html" method="GET" style="display: flex; flex-direction: column; gap: 16px;">
+      
+      <!-- Full Name -->
+      <div>
+        <label style="display: block; font-size: 12px; font-weight: 700; color: #d1d5db; margin-bottom: 6px;">Full Name</label>
+        <input type="text" placeholder="Enter your full name" required class="form-input">
+      </div>
+
+      <!-- Email Address -->
+      <div>
+        <label style="display: block; font-size: 12px; font-weight: 700; color: #d1d5db; margin-bottom: 6px;">Email Address</label>
+        <input type="email" placeholder="name@example.com" required class="form-input">
+      </div>
+
+      <!-- Password -->
+      <div>
+        <label style="display: block; font-size: 12px; font-weight: 700; color: #d1d5db; margin-bottom: 6px;">Password</label>
+        <input type="password" placeholder="At least 6 characters" required class="form-input">
+      </div>
+
+      <!-- Age & Gender Row -->
+      <div style="display: flex; gap: 10px;">
+        <div style="flex: 1;">
+          <label style="display: block; font-size: 12px; font-weight: 700; color: #d1d5db; margin-bottom: 6px;">Age</label>
+          <input type="number" placeholder="24" min="18" max="100" required class="form-input">
+        </div>
+        <div style="flex: 1;">
+          <label style="display: block; font-size: 12px; font-weight: 700; color: #d1d5db; margin-bottom: 6px;">I am a</label>
+          <select class="form-input" style="cursor: pointer;">
+            <option style="background: #110103; color: #fff;" value="woman">Woman</option>
+            <option style="background: #110103; color: #fff;" value="man">Man</option>
+            <option style="background: #110103; color: #fff;" value="other">Other</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Terms Checkbox -->
+      <div style="display: flex; align-items: flex-start; gap: 8px; margin-top: 4px; font-size: 11.5px; color: #a38f91;">
+        <input type="checkbox" required style="accent-color: #ef4444; margin-top: 2px; cursor: pointer;">
+        <span>I agree to the <a href="#" style="color: #ef4444; text-decoration: none;">Terms of Service</a> and <a href="#" style="color: #ef4444; text-decoration: none;">Privacy Policy</a>.</span>
+      </div>
+
+      <!-- Submit Button -->
+      <button type="submit" class="submit-btn" style="margin-top: 8px;">Create Account</button>
+
+    </form>
+
+    <!-- Footer Switch to Login -->
+    <div style="text-align: center; margin-top: 20px; font-size: 12.5px; color: #a38f91;">
+      Already have an account? <a href="index.html" style="color: #ef4444; font-weight: 700; text-decoration: none;">Log in</a>
+    </div>
+
+  </div>
+
+</body>
+</html>
